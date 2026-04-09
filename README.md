@@ -17,8 +17,14 @@
 
 ### Dev guide
 ```
-Install bun
+# Install bun
 
+curl -fsSL https://bun.sh/install | bash
+
+# Install dependency
+bun install
+
+# Run desktop App
 bun dev:desktop
 ```
 
