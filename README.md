@@ -17,8 +17,12 @@
 
 ### Dev guide
 ```
-# Install bun
 
+# Install Rust
+
+source $HOME/.cargo/env
+
+# Install bun
 curl -fsSL https://bun.sh/install | bash
 
 # Install dependency
