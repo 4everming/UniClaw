@@ -15,6 +15,14 @@
 </p>
 
 
+### Dev guide
+```
+Install bun
+
+bun dev:desktop
+```
+
+
 
 
 
