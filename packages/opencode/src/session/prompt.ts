@@ -197,52 +197,29 @@ export namespace SessionPrompt {
           m.info.role === "user" && !m.parts.every((p) => "synthetic" in p && p.synthetic)
         const idx = input.history.findIndex(real)
         if (idx === -1) return
-        if (input.history.filter(real).length !== 1) return
 
-        const context = input.history.slice(0, idx + 1)
-        const firstUser = context[idx]
+        // Use the first user message to generate title
+        const firstUser = input.history[idx]
         if (!firstUser || firstUser.info.role !== "user") return
-        const firstInfo = firstUser.info
 
-        const subtasks = firstUser.parts.filter((p): p is MessageV2.SubtaskPart => p.type === "subtask")
-        const onlySubtasks = subtasks.length > 0 && firstUser.parts.every((p) => p.type === "subtask")
+        // Extract text from text parts
+        const textParts = firstUser.parts
+          .filter((p): p is MessageV2.TextPart => p.type === "text" && !p.synthetic)
+          .map((p) => p.text)
+          .join(" ")
+          .trim()
 
-        const ag = yield* agents.get("title")
-        if (!ag) return
-        const mdl = ag.model
-          ? yield* provider.getModel(ag.model.providerID, ag.model.modelID)
-          : ((yield* provider.getSmallModel(input.providerID)) ??
-            (yield* provider.getModel(input.providerID, input.modelID)))
-        const msgs = onlySubtasks
-          ? [{ role: "user" as const, content: subtasks.map((p) => p.prompt).join("\n") }]
-          : yield* MessageV2.toModelMessagesEffect(context, mdl)
-        const text = yield* Effect.promise(async (signal) => {
-          const result = await LLM.stream({
-            agent: ag,
-            user: firstInfo,
-            system: [],
-            small: true,
-            tools: {},
-            model: mdl,
-            abort: signal,
-            sessionID: input.session.id,
-            retries: 2,
-            messages: [{ role: "user", content: "Generate a title for this conversation:\n" }, ...msgs],
-          })
-          return result.text
-        })
-        const cleaned = text
-          .replace(/<think>[\s\S]*?<\/think>\s*/g, "")
-          .split("\n")
-          .map((line) => line.trim())
-          .find((line) => line.length > 0)
-        if (!cleaned) return
-        const t = cleaned.length > 100 ? cleaned.substring(0, 97) + "..." : cleaned
+        if (!textParts) return
+
+        // Use first 50 characters as title
+        const maxLen = 50
+        const t = textParts.length > maxLen ? textParts.substring(0, maxLen - 3) + "..." : textParts
+
         yield* sessions
           .setTitle({ sessionID: input.session.id, title: t })
           .pipe(
             Effect.catchCause((cause) =>
-              Effect.sync(() => log.error("failed to generate title", { error: Cause.squash(cause) })),
+              Effect.sync(() => log.error("failed to set title", { error: Cause.squash(cause) })),
             ),
           )
       })

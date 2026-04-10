@@ -161,7 +161,7 @@ export namespace Skill {
 
     const configDirs = yield* config.directories()
     for (const dir of configDirs) {
-      yield* scan(state, bus, dir, OPENCODE_SKILL_PATTERN)
+      yield* scan(state, bus, dir, OPENCODE_SKILL_PATTERN, { dot: true, scope: "project" })
     }
 
     const cfg = yield* config.get()
@@ -173,7 +173,7 @@ export namespace Skill {
         continue
       }
 
-      yield* scan(state, bus, dir, SKILL_PATTERN)
+      yield* scan(state, bus, dir, SKILL_PATTERN, { dot: true, scope: "project" })
     }
 
     for (const url of cfg.skills?.urls ?? []) {

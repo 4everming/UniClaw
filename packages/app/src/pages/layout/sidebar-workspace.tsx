@@ -241,8 +241,9 @@ const WorkspaceSessionList = (props: {
   hasMore: Accessor<boolean>
   loadMore: () => Promise<void>
   language: ReturnType<typeof useLanguage>
+  level?: number
 }): JSX.Element => (
-  <nav class="flex flex-col gap-1">
+  <nav class="flex flex-col gap-1 pl-3">
     <Show when={props.showNew()}>
       <NewSessionItem
         slug={props.slug()}
@@ -263,6 +264,7 @@ const WorkspaceSessionList = (props: {
           slug={props.slug()}
           mobile={props.mobile}
           showChild
+          level={props.level ?? 1}
           sidebarExpanded={props.ctx.sidebarExpanded}
           clearHoverProjectSoon={props.ctx.clearHoverProjectSoon}
           prefetchSession={props.ctx.prefetchSession}

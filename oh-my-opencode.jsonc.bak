@@ -1,0 +1,28 @@
+{
+  "agents": {
+    "atlas": {
+      "model": "bailian-coding-plan/kimi-k2.5"
+    },
+    "explore": {
+      "model": "bailian-coding-plan/MiniMax-M2.5"
+    },
+    "librarian": {
+      "model": "bailian-coding-plan/MiniMax-M2.5"
+    },
+    "metis": {
+      "model": "bailian-coding-plan/kimi-k2.5"
+    },
+    "multimodal-looker": {
+      "model": "bailian-coding-plan/kimi-k2.5"
+    },
+    "oracle": {
+      "model": "bailian-coding-plan/glm-5"
+    },
+    "prometheus": {
+      "model": "bailian-coding-plan/glm-5"
+    },
+    "sisyphus": {
+      "model": "bailian-coding-plan/kimi-k2.5"
+    }
+  }
+}

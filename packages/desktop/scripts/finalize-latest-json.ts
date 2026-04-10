@@ -97,16 +97,16 @@ const add = (key: string, asset: Asset, signature: string) => {
 }
 
 const targets = [
-  { key: "linux-x86_64-deb", asset: "opencode-desktop-linux-amd64.deb" },
-  { key: "linux-x86_64-rpm", asset: "opencode-desktop-linux-x86_64.rpm" },
-  { key: "linux-aarch64-deb", asset: "opencode-desktop-linux-arm64.deb" },
-  { key: "linux-aarch64-rpm", asset: "opencode-desktop-linux-aarch64.rpm" },
-  { key: "windows-aarch64-nsis", asset: "opencode-desktop-windows-arm64.exe" },
-  { key: "windows-x86_64-nsis", asset: "opencode-desktop-windows-x64.exe" },
-  { key: "darwin-x86_64-app", asset: "opencode-desktop-darwin-x64.app.tar.gz" },
+  { key: "linux-x86_64-deb", asset: "uniclaw-desktop-linux-amd64.deb" },
+  { key: "linux-x86_64-rpm", asset: "uniclaw-desktop-linux-x86_64.rpm" },
+  { key: "linux-aarch64-deb", asset: "uniclaw-desktop-linux-arm64.deb" },
+  { key: "linux-aarch64-rpm", asset: "uniclaw-desktop-linux-aarch64.rpm" },
+  { key: "windows-aarch64-nsis", asset: "uniclaw-desktop-windows-arm64.exe" },
+  { key: "windows-x86_64-nsis", asset: "uniclaw-desktop-windows-x64.exe" },
+  { key: "darwin-x86_64-app", asset: "uniclaw-desktop-darwin-x64.app.tar.gz" },
   {
     key: "darwin-aarch64-app",
-    asset: "opencode-desktop-darwin-aarch64.app.tar.gz",
+    asset: "uniclaw-desktop-darwin-aarch64.app.tar.gz",
   },
 ]
 

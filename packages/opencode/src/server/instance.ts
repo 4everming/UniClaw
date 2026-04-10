@@ -1,3 +1,4 @@
+import path from "node:path"
 import { describeRoute, resolver, validator } from "hono-openapi"
 import { Hono } from "hono"
 import { proxy } from "hono/proxy"
@@ -236,6 +237,64 @@ export const InstanceRoutes = (upgrade: UpgradeWebSocket, app: Hono = new Hono()
         return c.json(skills)
       },
     )
+    .get("/skill/asset", async (c) => {
+      const filepath = c.req.query("path")
+      if (!filepath) return c.json({ error: "path required" }, 400)
+      const file = Bun.file(filepath)
+      if (!(await file.exists())) return c.json({ error: "not found" }, 404)
+      c.header("Content-Type", file.type)
+      c.header("Cache-Control", "public, max-age=3600")
+      return c.body(await file.arrayBuffer())
+    })
+    .get("/skill/icon", async (c) => {
+      const dir = c.req.query("dir")
+      if (!dir) return c.json({ error: "dir required" }, 400)
+
+      let iconPath: string | undefined
+
+      // Try to find icon from yaml config
+      try {
+        const yamlPath = path.join(dir, "agents", "openai.yaml")
+        const file = Bun.file(yamlPath)
+        if (await file.exists()) {
+          const yaml = await file.text()
+          for (const line of yaml.split("\n")) {
+            // Support both single and double quotes, and no quotes
+            const match = line.match(/^\s+icon_large:\s*["']?([^"']*)["']?\s*$/)
+            if (match) {
+              const rawPath = match[1].trim()
+              if (rawPath) {
+                iconPath = path.resolve(dir, rawPath)
+                break
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Error reading yaml for icon:", e)
+      }
+
+      // Fallback: find any PNG in assets directory
+      if (!iconPath) {
+        try {
+          const fs = await import("fs/promises")
+          const assetsDir = path.join(dir, "assets")
+          const files = await fs.readdir(assetsDir)
+          const png = files.find(f => f.toLowerCase().endsWith(".png"))
+          if (png) iconPath = path.join(assetsDir, png)
+        } catch (e) {
+          console.error("Error reading assets directory:", e)
+        }
+      }
+
+      if (!iconPath) return c.json({ error: "no icon found" }, 404)
+
+      const file = Bun.file(iconPath)
+      if (!(await file.exists())) return c.json({ error: "file not found", path: iconPath }, 404)
+      c.header("Content-Type", file.type || "image/png")
+      c.header("Cache-Control", "public, max-age=3600")
+      return c.body(await file.arrayBuffer())
+    })
     .get(
       "/lsp",
       describeRoute({
