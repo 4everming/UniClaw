@@ -30,6 +30,8 @@ bun install
 
 # Run desktop App
 bun dev:desktop
+
+bun run tauri build --bundles dmg 2>&1
 ```
 
 
